@@ -49,7 +49,7 @@ dirty_data$Street<-tools::toTitleCase(tolower(dirty_data$Street))
 dirty_data$Street.2<-tools::toTitleCase(tolower(dirty_data$Street.2))
 dirty_data
 ```
-# Removing 'strnage HTML column #
+# Removing 'strange HTML column' #
 ```{r}
 dirty_data$Strange.HTML<-NULL
 dirty_data
