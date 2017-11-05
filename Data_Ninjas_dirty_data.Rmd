@@ -30,27 +30,58 @@ for(row in 1:nrow(dirty_data)){
 
 # Removing special characters from street1 and street 2 columns in dirty data#
 ```{r}
-dirty_data$Street<-gsub("[^a-zA-z\\.,]","", dirty_data$Street)
-dirty_data$Street.2<gsub("[^a-zA-z\\.,]"," ", dirty_data$Street.2)
-dirty_data
+dirty_data$Street<-gsub("[^a-zA-Z0-9,]"," ", dirty_data$Street)
+dirty_data$Street.2<gsub("[^a-zA-Z0-9,]","", dirty_data$Street.2)
+#dirty_data
 ```
 # Removing padding from street1 and street 2 columns in dirty data #
 
 ```{r}
 dirty_data$Street<-trimws(dirty_data$Street, which = "both")
-dirty_data$Street
+#dirty_data$Street
 dirty_data$Street.2<-trimws(dirty_data$Street.2, which = "both")
-dirty_data
+#dirty_data
 ```
 
-# Capitalizing the first letters of all the street names #
+# Capitalizing all the  letters of all the street names #
 ```{r}
-dirty_data$Street<-tools::toTitleCase(tolower(dirty_data$Street))
-dirty_data$Street.2<-tools::toTitleCase(tolower(dirty_data$Street.2))
-dirty_data
+capwords <- function(s, strict = TRUE) {
+    cap <- function(s) paste(toupper(substring(s, 1, 1)),
+                  {s <- substring(s, 2); if(strict) tolower(s) else s},
+                             sep = "", collapse = " " )
+    sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
+}
+dirty_data$Street <- lapply(dirty_data$Street,capwords)
+dirty_data$Street.2<- lapply(dirty_data$Street.2,capwords)
+#dirty_data
 ```
-# Removing 'strange HTML column' #
+#Standardizing Names for Avenue, Road, Street etc
+
 ```{r}
-dirty_data$Strange.HTML<-NULL
-dirty_data
+dirty_data$Street <- gsub("Avenue","Ave",dirty_data$Street)
+dirty_data$Street <- gsub(" Rd","Road",dirty_data$Street)
+dirty_data$Street <- gsub(" Rd","Road",dirty_data$Street)
+dirty_data$Street <- gsub(" St","Street",dirty_data$Street)
+
+dirty_data$Street.2 <- gsub("Avenue","Ave",dirty_data$Street.2)
+dirty_data$Street.2 <- gsub(" Rd","Road",dirty_data$Street.2)
+dirty_data$Street.2 <- gsub(" Rd","Road",dirty_data$Street.2)
+dirty_data$Street.2 <- gsub(" St","Street",dirty_data$Street.2)
+
+```
+##Make Street 2 blank when Street and Street.2 are same
+
+```{r}
+streetcompare <- function(x,y){
+  if(x==y)
+  {NA}
+  else {x}
+}
+dirty_data$Street.2 <- lapply(dirty_data$Street.2,streetcompare,y=dirty_data$Street)
+```
+
+## Removing 'strange HTML column' #
+```{r}
+dirty_data$'Strange.HTML'<-NULL
+#dirty_data
 ```
